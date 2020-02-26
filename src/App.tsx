@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import ky from "ky-universal";
 
-function App() {
+type Comment = {
+  postId: number;
+  id: number;
+  name: string;
+  email: string;
+  body: string;
+};
+
+const App = () => {
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    ky.get("https://jsonplaceholder.typicode.com/comments")
+      .json<Comment[]>()
+      .then(setComments);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ul>
+      {comments.map(comm => (
+        <li key={comm.id}>{comm.body}</li>
+      ))}
+    </ul>
   );
-}
+};
 
 export default App;
